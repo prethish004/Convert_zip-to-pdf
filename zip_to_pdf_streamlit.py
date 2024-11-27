@@ -102,99 +102,185 @@
 
 # if __name__ == "__main__":
 #     main()
+# import streamlit as st
+# import zipfile
+# import os
+# from PIL import Image
+# from io import BytesIO
+
+# # Set Streamlit configuration
+# st.set_page_config(page_title="Large ZIP to PDF Converter", layout="centered")
+
+# # Function to extract numerical order from filenames
+# def extract_number(filename):
+#     import re
+#     match = re.search(r'(\d+)', filename)
+#     return int(match.group(1)) if match else float('inf')
+
+# # Function to resize and process images for PDF
+# def process_images_for_pdf(zip_file_path, output_pdf_name):
+#     temp_dir = "temp_images"
+#     os.makedirs(temp_dir, exist_ok=True)
+#     pdf_images = []
+
+#     try:
+#         # Extract ZIP contents to the temp directory
+#         with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+#             zip_ref.extractall(temp_dir)
+
+#         # Collect image files and sort them
+#         image_files = [
+#             os.path.join(temp_dir, f) for f in os.listdir(temp_dir)
+#             if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp'))
+#         ]
+#         image_files.sort(key=lambda x: extract_number(os.path.basename(x)))
+
+#         if not image_files:
+#             st.error("No valid images found in the ZIP file.")
+#             return None
+
+#         # Resize images and prepare for PDF
+#         for image_path in image_files:
+#             with Image.open(image_path) as img:
+#                 img = img.convert("RGB")
+#                 # Resize to 70% of original size to save memory
+#                 img = img.resize((int(img.width * 0.7), int(img.height * 0.7)))
+#                 pdf_images.append(img)
+
+#         # Save to a single PDF
+#         pdf_buffer = BytesIO()
+#         pdf_images[0].save(pdf_buffer, format="PDF", save_all=True, append_images=pdf_images[1:])
+#         pdf_buffer.seek(0)
+
+#         # Clean up temporary directory
+#         for f in os.listdir(temp_dir):
+#             os.remove(os.path.join(temp_dir, f))
+#         os.rmdir(temp_dir)
+
+#         return pdf_buffer, output_pdf_name
+
+#     except Exception as e:
+#         st.error(f"Error processing images: {str(e)}")
+#         return None
+
+# # Streamlit UI
+# st.title("Large ZIP to PDF Converter")
+# st.write("Upload a ZIP file containing images to convert them into a single PDF.")
+
+# # File uploader
+# uploaded_file = st.file_uploader("Upload ZIP File", type=["zip"])
+
+# if uploaded_file:
+#     try:
+#         # Save uploaded file temporarily
+#         zip_file_path = f"temp_{uploaded_file.name}"
+#         with open(zip_file_path, "wb") as temp_zip:
+#             temp_zip.write(uploaded_file.read())
+
+#         # Process the ZIP file
+#         pdf_name = uploaded_file.name.rsplit('.', 1)[0] + ".pdf"
+#         result = process_images_for_pdf(zip_file_path, pdf_name)
+
+#         if result:
+#             pdf_buffer, output_pdf_name = result
+#             st.success(f"PDF {output_pdf_name} generated successfully!")
+
+#             # Provide download button for the generated PDF
+#             st.download_button(
+#                 label="Download PDF",
+#                 data=pdf_buffer,
+#                 file_name=output_pdf_name,
+#                 mime="application/pdf"
+#             )
+
+#         # Clean up temporary ZIP file
+#         os.remove(zip_file_path)
+
+#     except Exception as e:
+#         st.error(f"Error: {str(e)}")
+
 import streamlit as st
 import zipfile
 import os
 from PIL import Image
 from io import BytesIO
 
-# Set Streamlit configuration
-st.set_page_config(page_title="Large ZIP to PDF Converter", layout="centered")
+# Specify a larger temporary storage directory
+TEMP_DIR = "/data/temp_images"  # Adjust path based on Render disk mount
+os.makedirs(TEMP_DIR, exist_ok=True)
 
-# Function to extract numerical order from filenames
-def extract_number(filename):
-    import re
-    match = re.search(r'(\d+)', filename)
-    return int(match.group(1)) if match else float('inf')
+# Streamlit UI setup
+st.title("Large ZIP to PDF Converter")
+st.write("Upload a ZIP file containing images to convert them into a single PDF.")
 
-# Function to resize and process images for PDF
-def process_images_for_pdf(zip_file_path, output_pdf_name):
-    temp_dir = "temp_images"
-    os.makedirs(temp_dir, exist_ok=True)
+# Function to process images into a PDF
+def process_zip_to_pdf(zip_path):
     pdf_images = []
 
     try:
-        # Extract ZIP contents to the temp directory
-        with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
-            zip_ref.extractall(temp_dir)
+        # Extract ZIP contents
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(TEMP_DIR)
 
-        # Collect image files and sort them
+        # Collect valid image files
         image_files = [
-            os.path.join(temp_dir, f) for f in os.listdir(temp_dir)
-            if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp'))
+            os.path.join(TEMP_DIR, f)
+            for f in os.listdir(TEMP_DIR)
+            if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')) and 'final' not in f.lower():
+                    image_files.append(file_path)
         ]
-        image_files.sort(key=lambda x: extract_number(os.path.basename(x)))
 
         if not image_files:
             st.error("No valid images found in the ZIP file.")
             return None
 
-        # Resize images and prepare for PDF
-        for image_path in image_files:
-            with Image.open(image_path) as img:
+        # Resize and process images for PDF
+        for image_file in sorted(image_files):
+            with Image.open(image_file) as img:
                 img = img.convert("RGB")
-                # Resize to 70% of original size to save memory
-                img = img.resize((int(img.width * 0.7), int(img.height * 0.7)))
+                img = img.resize((int(img.width * 0.7), int(img.height * 0.7)))  # Resize to 70%
                 pdf_images.append(img)
 
-        # Save to a single PDF
+        # Generate PDF in memory
         pdf_buffer = BytesIO()
         pdf_images[0].save(pdf_buffer, format="PDF", save_all=True, append_images=pdf_images[1:])
         pdf_buffer.seek(0)
-
-        # Clean up temporary directory
-        for f in os.listdir(temp_dir):
-            os.remove(os.path.join(temp_dir, f))
-        os.rmdir(temp_dir)
-
-        return pdf_buffer, output_pdf_name
+        return pdf_buffer
 
     except Exception as e:
-        st.error(f"Error processing images: {str(e)}")
+        st.error(f"Error processing ZIP file: {e}")
         return None
 
-# Streamlit UI
-st.title("Large ZIP to PDF Converter")
-st.write("Upload a ZIP file containing images to convert them into a single PDF.")
+    finally:
+        # Clean up temporary files
+        for root, dirs, files in os.walk(TEMP_DIR):
+            for file in files:
+                os.remove(os.path.join(root, file))
 
-# File uploader
+# Upload ZIP file
 uploaded_file = st.file_uploader("Upload ZIP File", type=["zip"])
 
 if uploaded_file:
-    try:
-        # Save uploaded file temporarily
-        zip_file_path = f"temp_{uploaded_file.name}"
-        with open(zip_file_path, "wb") as temp_zip:
-            temp_zip.write(uploaded_file.read())
+    temp_zip_path = os.path.join(TEMP_DIR, uploaded_file.name)
 
-        # Process the ZIP file
-        pdf_name = uploaded_file.name.rsplit('.', 1)[0] + ".pdf"
-        result = process_images_for_pdf(zip_file_path, pdf_name)
+    # Save uploaded file to disk
+    with open(temp_zip_path, "wb") as temp_zip:
+        temp_zip.write(uploaded_file.read())
 
-        if result:
-            pdf_buffer, output_pdf_name = result
-            st.success(f"PDF {output_pdf_name} generated successfully!")
+    pdf_buffer = process_zip_to_pdf(temp_zip_path)
 
-            # Provide download button for the generated PDF
-            st.download_button(
-                label="Download PDF",
-                data=pdf_buffer,
-                file_name=output_pdf_name,
-                mime="application/pdf"
-            )
+    if pdf_buffer:
+        # Provide download button
+        st.download_button(
+            label="Download PDF",
+            data=pdf_buffer,
+            file_name="converted.pdf",
+            mime="application/pdf"
+        )
+        except zipfile.BadZipFile:
+            st.error("Invalid ZIP file format. Please upload a valid ZIP file.")
+        except Exception as e:
+            st.error(f"An error occurred: {str(e)}")
 
-        # Clean up temporary ZIP file
-        os.remove(zip_file_path)
-
-    except Exception as e:
-        st.error(f"Error: {str(e)}")
+if __name__ == "__main__":
+    main()
