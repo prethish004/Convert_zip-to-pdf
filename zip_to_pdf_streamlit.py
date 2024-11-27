@@ -226,8 +226,7 @@ def process_zip_to_pdf(zip_path):
         image_files = [
             os.path.join(TEMP_DIR, f)
             for f in os.listdir(TEMP_DIR)
-            if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')) and 'final' not in f.lower():
-                    image_files.append(file_path)
+            if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')) and 'final' not in f.lower()
         ]
 
         if not image_files:
