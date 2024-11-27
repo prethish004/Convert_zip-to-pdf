@@ -199,14 +199,92 @@
 #     except Exception as e:
 #         st.error(f"Error: {str(e)}")
 
+# import streamlit as st
+# import zipfile
+# import os
+# from PIL import Image
+# from io import BytesIO
+
+# # Specify a larger temporary storage directory
+# TEMP_DIR = "/data/temp_images"  # Adjust path based on Render disk mount
+# os.makedirs(TEMP_DIR, exist_ok=True)
+
+# # Streamlit UI setup
+# st.title("Large ZIP to PDF Converter")
+# st.write("Upload a ZIP file containing images to convert them into a single PDF.")
+
+# # Function to process images into a PDF
+# def process_zip_to_pdf(zip_path):
+#     pdf_images = []
+
+#     try:
+#         # Extract ZIP contents
+#         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+#             zip_ref.extractall(TEMP_DIR)
+
+#         # Collect valid image files
+#         image_files = [
+#             os.path.join(TEMP_DIR, f)
+#             for f in os.listdir(TEMP_DIR)
+#             if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')) and 'final' not in f.lower()
+#         ]
+
+#         if not image_files:
+#             st.error("No valid images found in the ZIP file.")
+#             return None
+
+#         # Resize and process images for PDF
+#         for image_file in sorted(image_files):
+#             with Image.open(image_file) as img:
+#                 img = img.convert("RGB")
+#                 img = img.resize((int(img.width * 0.7), int(img.height * 0.7)))  # Resize to 70%
+#                 pdf_images.append(img)
+
+#         # Generate PDF in memory
+#         pdf_buffer = BytesIO()
+#         pdf_images[0].save(pdf_buffer, format="PDF", save_all=True, append_images=pdf_images[1:])
+#         pdf_buffer.seek(0)
+#         return pdf_buffer
+
+#     except Exception as e:
+#         st.error(f"Error processing ZIP file: {e}")
+#         return None
+
+#     finally:
+#         # Clean up temporary files
+#         for root, dirs, files in os.walk(TEMP_DIR):
+#             for file in files:
+#                 os.remove(os.path.join(root, file))
+
+# # Upload ZIP file
+# uploaded_file = st.file_uploader("Upload ZIP File", type=["zip"])
+
+# if uploaded_file:
+#     temp_zip_path = os.path.join(TEMP_DIR, uploaded_file.name)
+
+#     # Save uploaded file to disk
+#     with open(temp_zip_path, "wb") as temp_zip:
+#         temp_zip.write(uploaded_file.read())
+
+#     pdf_buffer = process_zip_to_pdf(temp_zip_path)
+
+#     if pdf_buffer:
+#         # Provide download button
+#         st.download_button(
+#             label="Download PDF",
+#             data=pdf_buffer,
+#             file_name="converted.pdf",
+#             mime="application/pdf"
+#         )
+
 import streamlit as st
 import zipfile
 import os
 from PIL import Image
 from io import BytesIO
 
-# Specify a larger temporary storage directory
-TEMP_DIR = "/data/temp_images"  # Adjust path based on Render disk mount
+# Use a writable directory for temporary storage (e.g., '/tmp' on Render)
+TEMP_DIR = "/tmp/temp_images"  # Use '/tmp' for writable storage in cloud platforms
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 # Streamlit UI setup
@@ -246,6 +324,10 @@ def process_zip_to_pdf(zip_path):
         pdf_buffer.seek(0)
         return pdf_buffer
 
+    except zipfile.BadZipFile:
+        st.error("Invalid ZIP file format. Please upload a valid ZIP file.")
+        return None
+
     except Exception as e:
         st.error(f"Error processing ZIP file: {e}")
         return None
@@ -266,6 +348,7 @@ if uploaded_file:
     with open(temp_zip_path, "wb") as temp_zip:
         temp_zip.write(uploaded_file.read())
 
+    # Process ZIP file to convert images to PDF
     pdf_buffer = process_zip_to_pdf(temp_zip_path)
 
     if pdf_buffer:
