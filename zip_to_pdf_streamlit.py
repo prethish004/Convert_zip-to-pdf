@@ -276,10 +276,3 @@ if uploaded_file:
             file_name="converted.pdf",
             mime="application/pdf"
         )
-        except zipfile.BadZipFile:
-            st.error("Invalid ZIP file format. Please upload a valid ZIP file.")
-        except Exception as e:
-            st.error(f"An error occurred: {str(e)}")
-
-if __name__ == "__main__":
-    main()
