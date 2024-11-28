@@ -458,7 +458,7 @@ def main():
                     zip_ref.extractall(temp_dir)
                 
                 for f in os.listdir(temp_dir):
-                    if f.lower().endswith(('.png', '.jpg', '.jpeg')):
+                    if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')) and 'final' not in f.lower():
                         all_image_files.append(os.path.join(temp_dir, f))
                 
                 all_image_files.sort(key=lambda x: extract_number(os.path.basename(x)))
