@@ -267,7 +267,7 @@ def convert_images_to_pdf(image_files, zip_name, resize_factor=0.7):
     pdf_images[0].save(pdf_buffer, format="PDF", save_all=True, append_images=pdf_images[1:])
     pdf_buffer.seek(0)
 
-    # Use the first ZIP file name for the PDF filename
+    # Use the last uploaded ZIP file name for the PDF filename
     pdf_filename = f"{zip_name}.pdf"
 
     return pdf_buffer, pdf_filename
@@ -291,9 +291,9 @@ def main():
         try:
             # List to store image files
             all_image_files = []
-            zip_name = uploaded_files[0].name.rsplit('.', 1)[0]  # Use the first ZIP file's name
+            zip_name = uploaded_files[-1].name.rsplit('.', 1)[0]  # Use the last ZIP file's name
 
-            # Extract ZIP files in the order they are uploaded
+            # Extract all ZIP files
             for uploaded_file in uploaded_files:
                 with zipfile.ZipFile(uploaded_file, 'r') as zip_ref:
                     zip_ref.extractall(temp_dir)
@@ -327,9 +327,11 @@ def main():
                 file_name=pdf_filename,
                 mime="application/pdf"
             )
+
         except zipfile.BadZipFile:
             st.error("Invalid ZIP file format. Please upload valid ZIP files.")
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
+
 if __name__ == "__main__":
     main()
