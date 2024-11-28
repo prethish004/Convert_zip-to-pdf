@@ -275,7 +275,7 @@ def convert_images_to_pdf(image_files, zip_name, resize_factor=0.7):
 # Streamlit app
 def main():
     st.title("ZIP to PDF Converter")
-    st.write("Upload 1 to 5 ZIP files containing images, and we'll convert them into a single PDF. The arrangement is based on your selection.")
+    st.write("Upload 1 to 5 ZIP files containing images, and we'll convert them into a single PDF. The arrangement is based on your selection. Start choosing from last to first.")
 
     # File upload (accept multiple ZIP files)
     uploaded_files = st.file_uploader("Upload ZIP files", type=["zip"], accept_multiple_files=True)
