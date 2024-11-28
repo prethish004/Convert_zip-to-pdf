@@ -1,119 +1,119 @@
-import streamlit as st
-from io import BytesIO
-import zipfile
-import os
-import re
-from PIL import Image
+# import streamlit as st
+# from io import BytesIO
+# import zipfile
+# import os
+# import re
+# from PIL import Image
 
-# Helper function to extract numeric parts from filenames
-def extract_number(filename):
-    """Extract the numerical part of the filename."""
-    match = re.search(r'(\d+)', filename)
-    return int(match.group(1)) if match else float('inf')
+# # Helper function to extract numeric parts from filenames
+# def extract_number(filename):
+#     """Extract the numerical part of the filename."""
+#     match = re.search(r'(\d+)', filename)
+#     return int(match.group(1)) if match else float('inf')
 
-# Helper function to process and resize an image to a common size
-def process_and_resize_image(image_path, max_width, max_height):
-    """Open, resize, and process an image to fit within the max_width and max_height."""
-    with Image.open(image_path) as img:
-        # Ensure image is in RGB format
-        img = img.convert("RGB")
+# # Helper function to process and resize an image to a common size
+# def process_and_resize_image(image_path, max_width, max_height):
+#     """Open, resize, and process an image to fit within the max_width and max_height."""
+#     with Image.open(image_path) as img:
+#         # Ensure image is in RGB format
+#         img = img.convert("RGB")
         
-        # Resize the image while maintaining aspect ratio
-        img.thumbnail((max_width, max_height))
+#         # Resize the image while maintaining aspect ratio
+#         img.thumbnail((max_width, max_height))
         
-        return img
+#         return img
 
-# Helper function to convert images to PDF
-def convert_images_to_pdf(image_files, zip_name, resize_factor=0.7):
-    """Convert a list of images to a single PDF."""
-    pdf_images = []
+# # Helper function to convert images to PDF
+# def convert_images_to_pdf(image_files, zip_name, resize_factor=0.7):
+#     """Convert a list of images to a single PDF."""
+#     pdf_images = []
 
-    # Find maximum width and height across all images for consistent resizing
-    max_width = 0
-    max_height = 0
-    for image_path in image_files:
-        with Image.open(image_path) as img:
-            max_width = max(max_width, img.width)
-            max_height = max(max_height, img.height)
+#     # Find maximum width and height across all images for consistent resizing
+#     max_width = 0
+#     max_height = 0
+#     for image_path in image_files:
+#         with Image.open(image_path) as img:
+#             max_width = max(max_width, img.width)
+#             max_height = max(max_height, img.height)
 
-    # Process and resize images
-    for image_path in image_files:
-        img = process_and_resize_image(image_path, max_width, max_height)
-        pdf_images.append(img)
+#     # Process and resize images
+#     for image_path in image_files:
+#         img = process_and_resize_image(image_path, max_width, max_height)
+#         pdf_images.append(img)
 
-    # Save the images to a single PDF (in memory)
-    pdf_buffer = BytesIO()
-    pdf_images[0].save(pdf_buffer, format="PDF", save_all=True, append_images=pdf_images[1:])
-    pdf_buffer.seek(0)
+#     # Save the images to a single PDF (in memory)
+#     pdf_buffer = BytesIO()
+#     pdf_images[0].save(pdf_buffer, format="PDF", save_all=True, append_images=pdf_images[1:])
+#     pdf_buffer.seek(0)
 
-    # Use the last uploaded ZIP file name for the PDF filename
-    pdf_filename = f"{zip_name}.pdf"
+#     # Use the last uploaded ZIP file name for the PDF filename
+#     pdf_filename = f"{zip_name}.pdf"
 
-    return pdf_buffer, pdf_filename
+#     return pdf_buffer, pdf_filename
 
-# Streamlit app
-def main():
-    st.title("ZIP to PDF Converter")
-    st.write("Upload 1 to 5 ZIP files containing images, and we'll convert them into a single PDF. The arrangement is based on your selection. Start choosing from last to first.")
+# # Streamlit app
+# def main():
+#     st.title("ZIP to PDF Converter")
+#     st.write("Upload 1 to 5 ZIP files containing images, and we'll convert them into a single PDF. The arrangement is based on your selection. Start choosing from last to first.")
 
-    # File upload (accept multiple ZIP files)
-    uploaded_files = st.file_uploader("Upload ZIP files", type=["zip"], accept_multiple_files=True)
+#     # File upload (accept multiple ZIP files)
+#     uploaded_files = st.file_uploader("Upload ZIP files", type=["zip"], accept_multiple_files=True)
     
-    if uploaded_files:
-        if len(uploaded_files) < 1 or len(uploaded_files) > 5:
-            st.error("Please upload between 1 and 5 ZIP files.")
-            return
+#     if uploaded_files:
+#         if len(uploaded_files) < 1 or len(uploaded_files) > 5:
+#             st.error("Please upload between 1 and 5 ZIP files.")
+#             return
 
-        temp_dir = "temp_images"
-        os.makedirs(temp_dir, exist_ok=True)
+#         temp_dir = "temp_images"
+#         os.makedirs(temp_dir, exist_ok=True)
 
-        try:
-            # List to store image files
-            all_image_files = []
-            zip_name = uploaded_files[-1].name.rsplit('.', 1)[0]  # Use the last ZIP file's name
+#         try:
+#             # List to store image files
+#             all_image_files = []
+#             zip_name = uploaded_files[-1].name.rsplit('.', 1)[0]  # Use the last ZIP file's name
 
-            # Extract all ZIP files
-            for uploaded_file in uploaded_files:
-                with zipfile.ZipFile(uploaded_file, 'r') as zip_ref:
-                    zip_ref.extractall(temp_dir)
+#             # Extract all ZIP files
+#             for uploaded_file in uploaded_files:
+#                 with zipfile.ZipFile(uploaded_file, 'r') as zip_ref:
+#                     zip_ref.extractall(temp_dir)
 
-                # Collect valid image files from the current ZIP
-                for f in os.listdir(temp_dir):
-                    file_path = os.path.join(temp_dir, f)
-                    if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')) and 'final' not in f.lower():
-                        all_image_files.append(file_path)
+#                 # Collect valid image files from the current ZIP
+#                 for f in os.listdir(temp_dir):
+#                     file_path = os.path.join(temp_dir, f)
+#                     if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')) and 'final' not in f.lower():
+#                         all_image_files.append(file_path)
 
-            # Sort files numerically based on filenames
-            all_image_files = sorted(all_image_files, key=lambda x: extract_number(os.path.basename(x)))
+#             # Sort files numerically based on filenames
+#             all_image_files = sorted(all_image_files, key=lambda x: extract_number(os.path.basename(x)))
 
-            if not all_image_files:
-                st.error("No valid images found in the ZIP files.")
-                return
+#             if not all_image_files:
+#                 st.error("No valid images found in the ZIP files.")
+#                 return
 
-            # Convert images to PDF
-            pdf_buffer, pdf_filename = convert_images_to_pdf(all_image_files, zip_name)
+#             # Convert images to PDF
+#             pdf_buffer, pdf_filename = convert_images_to_pdf(all_image_files, zip_name)
 
-            # Cleanup temporary files
-            for f in os.listdir(temp_dir):
-                os.remove(os.path.join(temp_dir, f))
-            os.rmdir(temp_dir)
+#             # Cleanup temporary files
+#             for f in os.listdir(temp_dir):
+#                 os.remove(os.path.join(temp_dir, f))
+#             os.rmdir(temp_dir)
 
-            # Download button for the generated PDF
-            st.success(f"PDF successfully created: {pdf_filename}")
-            st.download_button(
-                label="Download PDF",
-                data=pdf_buffer,
-                file_name=pdf_filename,
-                mime="application/pdf"
-            )
+#             # Download button for the generated PDF
+#             st.success(f"PDF successfully created: {pdf_filename}")
+#             st.download_button(
+#                 label="Download PDF",
+#                 data=pdf_buffer,
+#                 file_name=pdf_filename,
+#                 mime="application/pdf"
+#             )
 
-        except zipfile.BadZipFile:
-            st.error("Invalid ZIP file format. Please upload valid ZIP files.")
-        except Exception as e:
-            st.error(f"An error occurred: {str(e)}")
+#         except zipfile.BadZipFile:
+#             st.error("Invalid ZIP file format. Please upload valid ZIP files.")
+#         except Exception as e:
+#             st.error(f"An error occurred: {str(e)}")
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 # import streamlit as st
 # from io import BytesIO
 # import zipfile
@@ -383,3 +383,104 @@ if __name__ == "__main__":
 # if __name__ == "__main__":
 #     main()
 
+
+import streamlit as st
+from io import BytesIO
+import zipfile
+import os
+import re
+from PIL import Image
+from PyPDF2 import PdfMerger
+
+# Helper function to extract numeric parts from filenames
+def extract_number(filename):
+    match = re.search(r'(\d+)', filename)
+    return int(match.group(1)) if match else float('inf')
+
+# Helper function to process and resize an image
+def process_and_resize_image(image_path, max_width, max_height):
+    with Image.open(image_path) as img:
+        img = img.convert("RGB")
+        img.thumbnail((max_width, max_height))
+        return img
+
+# Convert images to a PDF
+def convert_images_to_pdf(image_files):
+    pdf_images = []
+    max_width, max_height = 0, 0
+
+    # Determine max dimensions
+    for image_path in image_files:
+        try:
+            with Image.open(image_path) as img:
+                max_width = max(max_width, img.width)
+                max_height = max(max_height, img.height)
+        except Exception as e:
+            st.error(f"Error reading image {image_path}: {e}")
+
+    # Resize images
+    for image_path in image_files:
+        pdf_images.append(process_and_resize_image(image_path, max_width, max_height))
+
+    pdf_buffer = BytesIO()
+    pdf_images[0].save(pdf_buffer, format="PDF", save_all=True, append_images=pdf_images[1:])
+    pdf_buffer.seek(0)
+    return pdf_buffer
+
+def main():
+    st.title("Multi-ZIP to PDF Converter")
+    st.write("Upload 1 to 5 ZIP files, reorder them, and get a merged PDF.")
+    
+    uploaded_files = st.file_uploader("Upload ZIP files", type=["zip"], accept_multiple_files=True)
+    
+    if uploaded_files:
+        if len(uploaded_files) < 1 or len(uploaded_files) > 5:
+            st.error("Please upload between 1 and 5 ZIP files.")
+            return
+        
+        zip_names = [f.name for f in uploaded_files]
+        ordered_zip_names = st.multiselect("Reorder ZIP files:", zip_names, default=zip_names)
+
+        if len(ordered_zip_names) != len(uploaded_files):
+            st.error("Please reorder all files.")
+            return
+
+        temp_dir = "temp_images"
+        os.makedirs(temp_dir, exist_ok=True)
+
+        pdf_merger = PdfMerger()
+        try:
+            for zip_name in ordered_zip_names:
+                uploaded_file = next(file for file in uploaded_files if file.name == zip_name)
+                all_image_files = []
+                
+                with zipfile.ZipFile(uploaded_file, 'r') as zip_ref:
+                    zip_ref.extractall(temp_dir)
+                
+                for f in os.listdir(temp_dir):
+                    if f.lower().endswith(('.png', '.jpg', '.jpeg')):
+                        all_image_files.append(os.path.join(temp_dir, f))
+                
+                all_image_files.sort(key=lambda x: extract_number(os.path.basename(x)))
+                
+                if all_image_files:
+                    pdf_buffer = convert_images_to_pdf(all_image_files)
+                    pdf_merger.append(pdf_buffer)
+                else:
+                    st.warning(f"No valid images in {zip_name}.")
+
+                for f in os.listdir(temp_dir):
+                    os.remove(os.path.join(temp_dir, f))
+
+            final_pdf_buffer = BytesIO()
+            pdf_merger.write(final_pdf_buffer)
+            final_pdf_buffer.seek(0)
+            final_pdf_filename = f"{ordered_zip_names[0].rsplit('.', 1)[0]}.pdf"
+            
+            st.download_button("Download PDF", final_pdf_buffer, file_name=final_pdf_filename)
+        finally:
+            if os.path.exists(temp_dir):
+                os.rmdir(temp_dir)
+
+if __name__ == "__main__":
+    main()
