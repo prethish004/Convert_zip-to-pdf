@@ -1,3 +1,4 @@
 streamlit
 pillow
 zipfile36
+PyPDF2
