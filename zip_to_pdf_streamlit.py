@@ -327,11 +327,9 @@ def main():
                 file_name=pdf_filename,
                 mime="application/pdf"
             )
-
         except zipfile.BadZipFile:
             st.error("Invalid ZIP file format. Please upload valid ZIP files.")
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
-
 if __name__ == "__main__":
     main()
