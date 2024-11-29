@@ -648,7 +648,7 @@ def main():
                 for image_path in all_image_files:
                     resized_img = resize_to_a4(image_path)
                     resized_path = os.path.join(temp_dir, f"resized_{os.path.basename(image_path)}")
-                    resized_img.save(resized_path, quality=85)  # Save with reduced quality
+                    resized_img.save(resized_path, quality=65)  # Save with reduced quality
                     resized_images.append(resized_path)
 
                 # Convert to PDF using img2pdf
