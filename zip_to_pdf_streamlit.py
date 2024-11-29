@@ -597,7 +597,7 @@ def convert_images_to_pdf(image_files):
 
     # Save the images to a single PDF (in memory)
     pdf_buffer = BytesIO()
-    pdf_images[0].save(pdf_buffer, format="PDF", save_all=True, append_images=pdf_images[1:], quality=65)
+    pdf_images[0].save(pdf_buffer, format="PDF", save_all=True, append_images=pdf_images[1:], quality=85)
     pdf_buffer.seek(0)
 
     return pdf_buffer
