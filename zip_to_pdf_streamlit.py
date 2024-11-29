@@ -579,7 +579,7 @@ def process_and_resize_image(image_path):
             new_height = a4_height
             new_width = int(new_height * img_aspect_ratio)
 
-        img = img.resize((new_width, new_height), Image.ANTIALIAS)
+        img = img.resize((new_width, new_height),  Image.Resampling.LANCZOS)
 
         # Create a blank white A4 canvas and paste the resized image on it
         canvas = Image.new("RGB", (a4_width, a4_height), "white")
@@ -645,7 +645,7 @@ def main():
                 # Collect valid image files from the current ZIP
                 for f in os.listdir(temp_dir):
                     file_path = os.path.join(temp_dir, f)
-                    if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')) and 'final' not in f.lower():
+                    if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp','.tiff', '.webp')) and 'final' not in f.lower():
                         all_image_files.append(file_path)
 
                 # Sort files numerically based on filenames
