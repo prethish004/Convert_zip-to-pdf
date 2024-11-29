@@ -418,10 +418,32 @@ def extract_number(filename):
     """Extract the numerical part of the filename."""
     match = re.search(r'(\d+)', filename)
     return int(match.group(1)) if match else float('inf')
-        
-# Helper function to convert images to a single PDF with high quality
+
+# Helper function to resize an image to fit A4 size
+def resize_to_a4(image_path):
+    """Resize an image to fit within A4 size, maintaining orientation."""
+    with Image.open(image_path) as img:
+        img = img.convert("RGB")  # Ensure RGB format
+        original_width, original_height = img.size
+
+        # Check if the image is landscape or portrait
+        if original_width > original_height:  # Portrait
+            # Resize to fit portrait A4 size
+            img.thumbnail((A4_HEIGHT, A4_WIDTH), Image.Resampling.LANCZOS)
+            new_img = Image.new("RGB", (A4_HEIGHT, A4_WIDTH), (255, 255, 255))
+            new_img.paste(img, ((A4_HEIGHT - img.width) // 2, (A4_WIDTH - img.height) // 2))
+
+        else:  #  Landscape
+            # Resize to fit landscape A4 size
+            img.thumbnail((A4_WIDTH, A4_HEIGHT), Image.Resampling.LANCZOS)
+            new_img = Image.new("RGB", (A4_WIDTH, A4_HEIGHT), (255, 255, 255))
+            new_img.paste(img, ((A4_WIDTH - img.width) // 2, (A4_HEIGHT - img.height) // 2))
+
+        return new_img
+
+# Helper function to convert images to a single PDF
 def convert_images_to_pdf(image_files):
-    """Convert a list of images to a single high-quality PDF with A4 size pages."""
+    """Convert a list of images to a single PDF with A4 size pages."""
     pdf_images = []
 
     # Process and resize images
@@ -429,40 +451,12 @@ def convert_images_to_pdf(image_files):
         resized_img = resize_to_a4(image_path)
         pdf_images.append(resized_img)
 
-    # Save the images to a single PDF (in memory) with high resolution and quality
+    # Save the images to a single PDF (in memory)
     pdf_buffer = BytesIO()
-    pdf_images[0].save(
-        pdf_buffer,
-        format="PDF",
-        save_all=True,
-        append_images=pdf_images[1:],
-        resolution=300,  # High DPI (increase to 600 if needed)
-        quality=100  # Ensure maximum image quality
-    )
+    pdf_images[0].save(pdf_buffer, format="PDF", save_all=True, append_images=pdf_images[1:])
     pdf_buffer.seek(0)
 
     return pdf_buffer
-
-# Adjust the resize function to maintain clarity
-def resize_to_a4(image_path):
-    """Resize an image to fit within A4 size, maintaining orientation and clarity."""
-    with Image.open(image_path) as img:
-        img = img.convert("RGB")  # Ensure RGB format to avoid quality loss
-        original_width, original_height = img.size
-
-        # Check if the image is landscape or portrait
-        if original_width > original_height:  # Portrait
-            img.thumbnail((A4_HEIGHT * 4, A4_WIDTH * 4), Image.Resampling.LANCZOS)
-            new_img = Image.new("RGB", (A4_HEIGHT * 4, A4_WIDTH * 4), (255, 255, 255))
-            new_img.paste(img, ((A4_HEIGHT * 4 - img.width) // 2, (A4_WIDTH * 4 - img.height) // 2))
-        else:  # Landscape
-            img.thumbnail((A4_WIDTH * 4, A4_HEIGHT * 4), Image.Resampling.LANCZOS)
-            new_img = Image.new("RGB", (A4_WIDTH * 4, A4_HEIGHT * 4), (255, 255, 255))
-            new_img.paste(img, ((A4_WIDTH * 4 - img.width) // 2, (A4_HEIGHT * 4 - img.height) // 2))
-
-        return new_img
-
-
 
 # Streamlit app
 def main():
