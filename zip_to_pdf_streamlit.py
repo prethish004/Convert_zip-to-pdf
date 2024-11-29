@@ -528,7 +528,6 @@ def process_and_resize_to_a4(image_path):
     #     a4_canvas.paste(img, (x_offset, y_offset))
 
     #     return a4_canvas
-
       with Image.open(image_path) as img:
         img = img.convert("RGB")  # Ensure RGB format
         original_width, original_height = img.size
