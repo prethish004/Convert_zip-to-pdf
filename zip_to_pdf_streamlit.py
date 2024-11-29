@@ -566,7 +566,8 @@ def extract_number(filename):
 # Helper function to process and resize an image to fit A4 size
 def process_and_resize_image(image_path):
     """Resize an image to fit within A4 dimensions, maintaining aspect ratio."""
-    a4_width, a4_height = 595, 842  # A4 size in points (1 point = 1/72 inch)
+    A4_WIDTH = 595
+    A4_HEIGHT = 842
     with Image.open(image_path) as img:
         img = img.convert("RGB")  # Ensure RGB format
         original_width, original_height = img.size
