@@ -509,26 +509,43 @@ def extract_number(filename):
 def process_and_resize_to_a4(image_path):
     """Resize an image to fit within A4 size (595x842 points in portrait)."""
     A4_WIDTH, A4_HEIGHT = 595, 842  # A4 size in points
-    with Image.open(image_path) as img:
-        img = img.convert("RGB")  # Ensure image is in RGB format
+    # with Image.open(image_path) as img:
+    #     img = img.convert("RGB")  # Ensure image is in RGB format
 
-        # Check if the image is in landscape
-        if img.width > img.height:
-            # Swap dimensions to make it portrait
-            img = img.rotate(90, expand=True)
+    #     # Check if the image is in landscape
+    #     if img.width > img.height:
+    #         # Swap dimensions to make it portrait
+    #         img = img.rotate(90, expand=True)
 
-        # Resize image to fit within A4 dimensions
-        img.thumbnail((A4_WIDTH, A4_HEIGHT), Image.Resampling.LANCZOS)
+    #     # Resize image to fit within A4 dimensions
+    #     img.thumbnail((A4_WIDTH, A4_HEIGHT), Image.Resampling.LANCZOS)
 
-        # Create a blank A4 canvas
-        a4_canvas = Image.new("RGB", (A4_WIDTH, A4_HEIGHT), "white")
-        # Center the image on the A4 canvas
-        x_offset = (A4_WIDTH - img.width) // 2
-        y_offset = (A4_HEIGHT - img.height) // 2
-        a4_canvas.paste(img, (x_offset, y_offset))
+    #     # Create a blank A4 canvas
+    #     a4_canvas = Image.new("RGB", (A4_WIDTH, A4_HEIGHT), "white")
+    #     # Center the image on the A4 canvas
+    #     x_offset = (A4_WIDTH - img.width) // 2
+    #     y_offset = (A4_HEIGHT - img.height) // 2
+    #     a4_canvas.paste(img, (x_offset, y_offset))
+
+    #     return a4_canvas
+
+      with Image.open(image_path) as img:
+        img = img.convert("RGB")  # Ensure RGB format
+        original_width, original_height = img.size
+
+        # Check if the image is landscape or portrait
+        if original_width > original_height:  # Landscape
+            # Resize to fit landscape A4 size
+            img.thumbnail((A4_WIDTH, A4_HEIGHT), Image.Resampling.LANCZOS)
+            a4_canvas = Image.new("RGB", (A4_WIDTH, A4_HEIGHT), (255, 255, 255))
+            a4_canvas.paste(img, ((A4_WIDTH - img.width) // 2, (A4_HEIGHT - img.height) // 2))
+        else:  # Portrait
+            # Resize to fit portrait A4 size
+            img.thumbnail((A4_HEIGHT, A4_WIDTH), Image.Resampling.LANCZOS)
+            a4_canvas = Image.new("RGB", (A4_HEIGHT, A4_WIDTH), (255, 255, 255))
+            a4_canvas.paste(img, ((A4_HEIGHT - img.width) // 2, (A4_WIDTH - img.height) // 2))
 
         return a4_canvas
-
 # Helper function to convert images to PDF
 def convert_images_to_pdf(image_files):
     """Convert a list of images to a single PDF in A4 portrait size."""
