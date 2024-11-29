@@ -603,7 +603,7 @@ def convert_images_to_pdf(image_files):
         save_all=True,
         append_images=pdf_images[1:],
         resolution=300,  # Higher DPI for better image quality
-        quality=100      # Maximum image quality
+        quality=50      # Maximum image quality
     )
     pdf_buffer.seek(0)
     return pdf_buffer
