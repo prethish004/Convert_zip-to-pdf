@@ -597,7 +597,7 @@ def main():
                 # Collect valid image files from the current ZIP
                 for f in os.listdir(current_temp_dir):
                     file_path = os.path.join(current_temp_dir, f)
-                    if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')):
+                    if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')) and 'final' not in f.lower():
                         all_image_files.append(file_path)
 
                 # Sort files numerically based on filenames
