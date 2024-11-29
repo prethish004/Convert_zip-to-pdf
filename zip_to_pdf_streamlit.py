@@ -427,16 +427,17 @@ def resize_to_a4(image_path):
         original_width, original_height = img.size
 
         # Check if the image is landscape or portrait
-        if original_width > original_height:  # Landscape
-            # Resize to fit landscape A4 size
-            img.thumbnail((A4_WIDTH, A4_HEIGHT), Image.Resampling.LANCZOS)
-            new_img = Image.new("RGB", (A4_WIDTH, A4_HEIGHT), (255, 255, 255))
-            new_img.paste(img, ((A4_WIDTH - img.width) // 2, (A4_HEIGHT - img.height) // 2))
-        else:  # Portrait
+        if original_width > original_height:  # Portrait
             # Resize to fit portrait A4 size
             img.thumbnail((A4_HEIGHT, A4_WIDTH), Image.Resampling.LANCZOS)
             new_img = Image.new("RGB", (A4_HEIGHT, A4_WIDTH), (255, 255, 255))
             new_img.paste(img, ((A4_HEIGHT - img.width) // 2, (A4_WIDTH - img.height) // 2))
+
+        else:  #  Landscape
+            # Resize to fit landscape A4 size
+            img.thumbnail((A4_WIDTH, A4_HEIGHT), Image.Resampling.LANCZOS)
+            new_img = Image.new("RGB", (A4_WIDTH, A4_HEIGHT), (255, 255, 255))
+            new_img.paste(img, ((A4_WIDTH - img.width) // 2, (A4_HEIGHT - img.height) // 2))
 
         return new_img
 
