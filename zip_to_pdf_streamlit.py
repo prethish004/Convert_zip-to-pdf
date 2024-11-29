@@ -434,7 +434,7 @@ def resize_to_a4(image_path):
             new_img.paste(img, ((A4_WIDTH - img.width) // 2, (A4_HEIGHT - img.height) // 2))
         else:  # Portrait
             # Resize to fit portrait A4 size
-            img.thumbnail((A4_HEIGHT, A4_WIDTH), Image.ANTIALIAS)
+            img.thumbnail((A4_HEIGHT, A4_WIDTH), Image.Resampling.LANCZOS)
             new_img = Image.new("RGB", (A4_HEIGHT, A4_WIDTH), (255, 255, 255))
             new_img.paste(img, ((A4_HEIGHT - img.width) // 2, (A4_WIDTH - img.height) // 2))
 
