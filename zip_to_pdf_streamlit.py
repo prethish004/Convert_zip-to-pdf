@@ -429,7 +429,7 @@ def resize_to_a4(image_path):
         # Check if the image is landscape or portrait
         if original_width > original_height:  # Landscape
             # Resize to fit landscape A4 size
-            img.thumbnail((A4_WIDTH, A4_HEIGHT), Image.ANTIALIAS)
+            img.thumbnail((A4_WIDTH, A4_HEIGHT), Image.Resampling.LANCZOS)
             new_img = Image.new("RGB", (A4_WIDTH, A4_HEIGHT), (255, 255, 255))
             new_img.paste(img, ((A4_WIDTH - img.width) // 2, (A4_HEIGHT - img.height) // 2))
         else:  # Portrait
@@ -460,14 +460,14 @@ def convert_images_to_pdf(image_files):
 # Streamlit app
 def main():
     st.title("ZIP to PDF Converter")
-    st.write("Upload 1 to 5 ZIP files containing images. Rearrange the ZIP file order, and we'll create a PDF based on your selection. The first ZIP file's name will be used for the PDF.")
+    st.write("Upload 1 to 15 ZIP files containing images. Rearrange the ZIP file order, and we'll create a PDF based on your selection. The first ZIP file's name will be used for the PDF.")
 
     # File upload (accept multiple ZIP files)
     uploaded_files = st.file_uploader("Upload ZIP files", type=["zip"], accept_multiple_files=True)
 
     if uploaded_files:
-        if len(uploaded_files) < 1 or len(uploaded_files) > 5:
-            st.error("Please upload between 1 and 5 ZIP files.")
+        if len(uploaded_files) < 1 or len(uploaded_files) > 15:
+            st.error("Please upload between 1 and 15 ZIP files.")
             return
 
         # Display uploaded ZIP files for reordering
@@ -498,7 +498,7 @@ def main():
                 # Collect valid image files from the current ZIP
                 for f in os.listdir(temp_dir):
                     file_path = os.path.join(temp_dir, f)
-                    if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.tiff', '.webp')):
+                    if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp','.tiff', '.webp'))and 'final' not in f.lower():
                         all_image_files.append(file_path)
 
                 # Sort files numerically based on filenames
