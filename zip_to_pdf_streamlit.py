@@ -555,44 +555,8 @@ import re
 import shutil
 from PIL import Image, ImageOps,ImageFile
 from PyPDF2 import PdfMerger
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-
-import streamlit as st
-
-def set_background(image_url=None, color=None):
-    """Set the background of the Streamlit app."""
-    css_code = """
-    <style>
-    body {{
-        background-image: url("{image_url}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-color: {color};
-    }}
-    </style>
-    """.format(image_url=image_url or "", color=color or "#FFFFFF")
-    st.markdown(css_code, unsafe_allow_html=True)
-
-def set_logo(logo_url):
-    """Add a logo to the Streamlit app."""
-    st.markdown(
-        f"""
-        <div style="text-align: center;">
-            <img src="{logo_url}" alt="Logo" style="width:150px; margin-top: -50px;">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-# Set background and logo
-set_background(image_url="https://www.pdfgear.com/pdf-converter/img/how-to-convert-a-zip-file-to-pdf-1.png", color="#f0f0f0")
-set_logo("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0wnNq8ceH6jJRBuHWa8P5LvvFj2tDxvww9cjc6RO3DgAVwGy6EaOhKL5IGygrwcB-_uo&usqp=CAU")
-
-# Your Streamlit app content
-st.title("Custom Styled App")
-st.write("This app has a custom background and logo!")
-
 
 # Helper function to extract numeric parts from filenames
 def extract_number(filename):
