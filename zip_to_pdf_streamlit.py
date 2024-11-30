@@ -547,14 +547,13 @@
 # if __name__ == "__main__":
 #     main()
 
-
 import streamlit as st
 from io import BytesIO
 import zipfile
 import os
 import re
 import shutil
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps,ImageFile
 from PyPDF2 import PdfMerger
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
