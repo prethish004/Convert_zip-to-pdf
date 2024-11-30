@@ -556,6 +556,7 @@ import re
 import shutil
 from PIL import Image, ImageOps
 from PyPDF2 import PdfMerger
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 # Helper function to extract numeric parts from filenames
 def extract_number(filename):
