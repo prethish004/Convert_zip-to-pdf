@@ -1,3 +1,5 @@
 [server]
-maxUploadSize = 3000  # Set the maximum upload size in megabytes
-
+maxUploadSize = 4000  # Set the maximum upload size in megabytes
+headless = true
+enableCORS = false
+port = 8501
