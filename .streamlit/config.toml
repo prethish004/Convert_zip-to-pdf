@@ -1,3 +1,2 @@
 [server]
-maxUploadSize = 2000  # Set the maximum upload size in megabytes
-port = 8501
+maxUploadSize = 1500  # Set the maximum upload size in megabytes
