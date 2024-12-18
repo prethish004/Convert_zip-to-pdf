@@ -3,3 +3,4 @@ pillow
 zipfile36
 PyPDF2
 img2pdf
+fpdf2
