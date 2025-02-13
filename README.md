@@ -35,8 +35,8 @@ Website Link ="https://ziptopdfconvertor.streamlit.app/"
 ## 🚀 Get Started  
 Clone the repo and install dependencies:  
 ```bash
-git clone https://github.com/your-repo/zip-to-pdf-converter.git
-cd zip-to-pdf-converter
+git clone https://github.com/prethish004/Convert_zip-to-pdf.git
+cd Convert_zip-to-pdf
 npm install
 npm start
 ---
