@@ -1,11 +1,47 @@
+# 🚀 ZIP to PDF Converter  
+
+Transform multiple ZIP files containing images into a **well-structured, high-quality PDF** in just a few clicks!  
+![image](https://github.com/user-attachments/assets/093e1920-d88d-46e8-b2ec-1192ba771394)
+
+## 🌟 Features  
+- ✅ **Upload up to 15 ZIP files** – Drag, drop, and organize your images effortlessly.  
+- ✅ **Rearrange ZIP file order** – Control the sequence before converting.  
+- ✅ **Smart Naming** – The first ZIP file’s name becomes the PDF title.  
+- ✅ **Lightning-fast Conversion** – Generate PDFs in seconds with a smooth user experience.  
+- ✅ **User-friendly UI** – Simple, clean, and intuitive interface.  
+
+## 🎯 How It Works  
+1️⃣ **Upload** your ZIP files containing images.  
+2️⃣ **Reorder** them as needed.  
+3️⃣ Hit **"Convert to PDF"** and let the magic happen!  
+4️⃣ The **first ZIP file’s name** is automatically used for the PDF.  
+5️⃣ Download your professionally compiled PDF! 🎉  
+
+## 🛠️ Tech Stack  
+- **Frontend**: React.js, TailwindCSS  
+- **Backend**: Node.js, Express  
+- **File Handling**: JSZip, PDFKit  
+- **Storage**: Firebase / Local Storage  
+
+## 📸 Preview  
 ![image](https://github.com/user-attachments/assets/812d2958-ac52-458f-a74c-1f83c1165bc0)
 
 ![image](https://github.com/user-attachments/assets/1d6d906a-fd59-4c09-a6ce-af9d9a811bd7)
 
+## 🌐Hosted
 
-Hosted website Link ="https://ziptopdfconvertor.streamlit.app/"
+Website Link ="https://ziptopdfconvertor.streamlit.app/"
 
-
+## 🚀 Get Started  
+Clone the repo and install dependencies:  
+```bash
+git clone https://github.com/your-repo/zip-to-pdf-converter.git
+cd zip-to-pdf-converter
+npm install
+npm start
+---
+---
+## Code Details
 ### **1. Library Imports:**
 - **Streamlit (`st`)**: For creating the web interface.
 - **`BytesIO`**: To handle in-memory binary streams.
