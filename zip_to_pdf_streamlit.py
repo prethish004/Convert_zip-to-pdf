@@ -619,10 +619,6 @@ def convert_images_to_pdf(image_files, retain_original_size):
     pdf_buffer.seek(0)
 
     return pdf_buffer
-# Let user enter a range of image numbers to remove
-remove_range_input = st.text_input(
-    f"Enter image numbers to remove from {zip_name} (e.g. 2,5,10-12):", key=f"range_input_{zip_name}"
-)
 
 # Streamlit app
 def main():
@@ -682,7 +678,10 @@ def main():
                 
                 # Sort files numerically
                 image_files_temp = sorted(image_files_temp, key=lambda x: extract_number(os.path.basename(x)))
-                
+                # Let user enter a range of image numbers to remove
+                remove_range_input = st.text_input(
+                    f"Enter image numbers to remove from {zip_name} (e.g. 2,5,10-12):", key=f"range_input_{zip_name}"
+                )
                 if not image_files_temp:
                     st.error(f"No valid images found in {zip_name}.")
                     continue
