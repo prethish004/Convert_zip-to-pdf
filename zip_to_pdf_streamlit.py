@@ -669,7 +669,7 @@ def main():
 
                 # # Sort files numerically based on filenames
                 # all_image_files = sorted(all_image_files, key=lambda x: extract_number(os.path.basename(x)))
-# Collect valid image files from the current ZIP
+                # Collect valid image files from the current ZIP
                 image_files_temp = []
                 for f in os.listdir(temp_dir):
                     file_path = os.path.join(temp_dir, f)
@@ -683,26 +683,24 @@ def main():
                     st.error(f"No valid images found in {zip_name}.")
                     continue
                 
-                # Show image preview and let user remove unwanted ones
-                st.subheader(f"Preview images from: {zip_name}")
-                delete_choices = st.multiselect(
-                    f"Select images to remove from {zip_name}:",
-                    options=[os.path.basename(p) for p in image_files_temp],
-                    key=zip_name  # ensure unique key for each zip
-                )
-                
-                # Filter out deleted images
-                all_image_files = [p for p in image_files_temp if os.path.basename(p) not in delete_choices]
-                
-                # Show thumbnails
+                # Show images with checkboxes for deletion
+                st.subheader(f"Select images to REMOVE from: {zip_name}")
+                images_to_keep = []
                 cols = st.columns(4)
-                for idx, img_path in enumerate(all_image_files):
-                    with cols[idx % 4]:
-                        st.image(img_path, caption=os.path.basename(img_path), use_container_width=True)
                 
-                if not all_image_files:
+                for idx, image_path in enumerate(image_files_temp):
+                    with cols[idx % 4]:
+                        st.image(image_path, caption=os.path.basename(image_path), use_container_width=True)
+                        keep = not st.checkbox(f"Remove", key=f"{zip_name}_{os.path.basename(image_path)}")
+                        if keep:
+                            images_to_keep.append(image_path)
+                
+                if not images_to_keep:
                     st.warning(f"All images from {zip_name} were removed.")
                     continue
+                
+                # Proceed only with images the user wants to keep
+                all_image_files = images_to_keep
 
                 if not all_image_files:
                     st.error(f"No valid images found in {zip_name}.")
