@@ -619,6 +619,25 @@ def convert_images_to_pdf(image_files, retain_original_size):
     pdf_buffer.seek(0)
 
     return pdf_buffer
+# Let user enter a range of image numbers to remove
+remove_range_input = st.text_input(
+    f"Enter image numbers to remove from {zip_name} (e.g. 2,5,10-12):", key=f"range_input_{zip_name}"
+)
+
+# Parse removal range
+def parse_ranges(input_str):
+    removal_indices = set()
+    parts = input_str.split(',')
+    for part in parts:
+        if '-' in part:
+            start, end = part.split('-')
+            if start.strip().isdigit() and end.strip().isdigit():
+                removal_indices.update(range(int(start.strip()), int(end.strip()) + 1))
+        elif part.strip().isdigit():
+            removal_indices.add(int(part.strip()))
+    return removal_indices
+
+removal_indices = parse_ranges(remove_range_input)
 
 # Streamlit app
 def main():
@@ -683,24 +702,27 @@ def main():
                     st.error(f"No valid images found in {zip_name}.")
                     continue
                 
-                # Show images with checkboxes for deletion
-                st.subheader(f"Select images to REMOVE from: {zip_name}")
+                # Show images with checkboxes for deletion and page numbers
+                st.subheader(f"Review images from {zip_name}")
                 images_to_keep = []
                 cols = st.columns(4)
                 
                 for idx, image_path in enumerate(image_files_temp):
+                    page_number = idx + 1  # Page numbers start at 1
+                    remove_by_range = page_number in removal_indices
+                
                     with cols[idx % 4]:
-                        st.image(image_path, caption=os.path.basename(image_path), use_container_width=True)
-                        keep = not st.checkbox(f"Remove", key=f"{zip_name}_{os.path.basename(image_path)}")
-                        if keep:
+                        st.image(image_path, caption=f"Page {page_number}: {os.path.basename(image_path)}", use_container_width=True)
+                        remove = st.checkbox("Remove", key=f"{zip_name}_{os.path.basename(image_path)}", value=remove_by_range)
+                        if not remove:
                             images_to_keep.append(image_path)
                 
                 if not images_to_keep:
                     st.warning(f"All images from {zip_name} were removed.")
                     continue
                 
-                # Proceed only with images the user wants to keep
                 all_image_files = images_to_keep
+
 
                 if not all_image_files:
                     st.error(f"No valid images found in {zip_name}.")
