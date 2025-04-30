@@ -624,21 +624,6 @@ remove_range_input = st.text_input(
     f"Enter image numbers to remove from {zip_name} (e.g. 2,5,10-12):", key=f"range_input_{zip_name}"
 )
 
-# Parse removal range
-def parse_ranges(input_str):
-    removal_indices = set()
-    parts = input_str.split(',')
-    for part in parts:
-        if '-' in part:
-            start, end = part.split('-')
-            if start.strip().isdigit() and end.strip().isdigit():
-                removal_indices.update(range(int(start.strip()), int(end.strip()) + 1))
-        elif part.strip().isdigit():
-            removal_indices.add(int(part.strip()))
-    return removal_indices
-
-removal_indices = parse_ranges(remove_range_input)
-
 # Streamlit app
 def main():
     st.title("ZIP to PDF Converter")
@@ -701,7 +686,20 @@ def main():
                 if not image_files_temp:
                     st.error(f"No valid images found in {zip_name}.")
                     continue
+                # Parse removal range
+                def parse_ranges(input_str):
+                    removal_indices = set()
+                    parts = input_str.split(',')
+                    for part in parts:
+                        if '-' in part:
+                            start, end = part.split('-')
+                            if start.strip().isdigit() and end.strip().isdigit():
+                                removal_indices.update(range(int(start.strip()), int(end.strip()) + 1))
+                        elif part.strip().isdigit():
+                            removal_indices.add(int(part.strip()))
+                    return removal_indices
                 
+                removal_indices = parse_ranges(remove_range_input)
                 # Show images with checkboxes for deletion and page numbers
                 st.subheader(f"Review images from {zip_name}")
                 images_to_keep = []
