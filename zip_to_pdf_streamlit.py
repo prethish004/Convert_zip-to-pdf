@@ -662,13 +662,47 @@ def main():
                     zip_ref.extractall(temp_dir)
 
                 # Collect valid image files from the current ZIP
+                # for f in os.listdir(temp_dir):
+                #     file_path = os.path.join(temp_dir, f)
+                #     if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.webp')) and 'final' not in f.lower():
+                #         all_image_files.append(file_path)
+
+                # # Sort files numerically based on filenames
+                # all_image_files = sorted(all_image_files, key=lambda x: extract_number(os.path.basename(x)))
+# Collect valid image files from the current ZIP
+                image_files_temp = []
                 for f in os.listdir(temp_dir):
                     file_path = os.path.join(temp_dir, f)
                     if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff', '.webp')) and 'final' not in f.lower():
-                        all_image_files.append(file_path)
-
-                # Sort files numerically based on filenames
-                all_image_files = sorted(all_image_files, key=lambda x: extract_number(os.path.basename(x)))
+                        image_files_temp.append(file_path)
+                
+                # Sort files numerically
+                image_files_temp = sorted(image_files_temp, key=lambda x: extract_number(os.path.basename(x)))
+                
+                if not image_files_temp:
+                    st.error(f"No valid images found in {zip_name}.")
+                    continue
+                
+                # Show image preview and let user remove unwanted ones
+                st.subheader(f"Preview images from: {zip_name}")
+                delete_choices = st.multiselect(
+                    f"Select images to remove from {zip_name}:",
+                    options=[os.path.basename(p) for p in image_files_temp],
+                    key=zip_name  # ensure unique key for each zip
+                )
+                
+                # Filter out deleted images
+                all_image_files = [p for p in image_files_temp if os.path.basename(p) not in delete_choices]
+                
+                # Show thumbnails
+                cols = st.columns(4)
+                for idx, img_path in enumerate(all_image_files):
+                    with cols[idx % 4]:
+                        st.image(img_path, caption=os.path.basename(img_path), use_column_width=True)
+                
+                if not all_image_files:
+                    st.warning(f"All images from {zip_name} were removed.")
+                    continue
 
                 if not all_image_files:
                     st.error(f"No valid images found in {zip_name}.")
