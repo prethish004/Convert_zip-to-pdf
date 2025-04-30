@@ -698,7 +698,7 @@ def main():
                 cols = st.columns(4)
                 for idx, img_path in enumerate(all_image_files):
                     with cols[idx % 4]:
-                        st.image(img_path, caption=os.path.basename(img_path), use_column_width=True)
+                        st.image(img_path, caption=os.path.basename(img_path), use_container_width=True)
                 
                 if not all_image_files:
                     st.warning(f"All images from {zip_name} were removed.")
