@@ -1,6 +1,6 @@
-streamlit
-pillow
-zipfile36
-PyPDF2
-img2pdf
-fpdf2
+streamlit==1.45.0
+pillow>=10.0.0
+zipfile36>=0.1.3
+PyPDF2>=3.0.1
+img2pdf>=0.5.1
+fpdf2>=2.7.9
