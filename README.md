@@ -6,7 +6,9 @@ Transform multiple ZIP files containing images into a **well-structured, high-qu
 ## 🌟 Features  
 - ✅ **Upload up to 15 ZIP files** – Drag, drop, and organize your images effortlessly.  
 - ✅ **Rearrange ZIP file order** – Control the sequence before converting.  
-- ✅ **Smart Naming** – The first ZIP file’s name becomes the PDF title.  
+- ✅ **Smart Naming** – The first ZIP file’s name becomes the PDF title.
+- ✅ **zip images** – you can also see the zip file images.
+- ✅ **page removeing** – if you want to remove a specific image or a bunch of image you just need to type the range or the tick the image to remove.
 - ✅ **Lightning-fast Conversion** – Generate PDFs in seconds with a smooth user experience.  
 - ✅ **User-friendly UI** – Simple, clean, and intuitive interface.  
 
@@ -26,7 +28,8 @@ Transform multiple ZIP files containing images into a **well-structured, high-qu
 ## 📸 Preview  
 ![image](https://github.com/user-attachments/assets/812d2958-ac52-458f-a74c-1f83c1165bc0)
 
-![image](https://github.com/user-attachments/assets/1d6d906a-fd59-4c09-a6ce-af9d9a811bd7)
+![image](https://github.com/user-attachments/assets/240ca4d1-9f6f-46ec-a3c9-3fd3f78601d2)
+![image](https://github.com/user-attachments/assets/aef3dea3-2334-44d0-a484-df90f5731bce)
 
 ## 🌐Hosted
 
